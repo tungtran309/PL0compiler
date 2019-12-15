@@ -113,7 +113,7 @@ Token get_token() {
 			cur = get_char();
 		}
 		if (number.size() > MAX_NUMBER_LEN) {
-			error("too large number : " + number);
+			error((string)"too large number : " + number);
 			return NULL_TOKEN;
 		}
 		int val = get_int(number);
@@ -139,7 +139,7 @@ Token get_token() {
 			cur = get_char();
 			return Token(ASSIGN, ":=");
 		}
-		error("wrong token : " + ':' + cur);
+		error((string)"wrong token : " + cur);
 		return NULL_TOKEN;
 	}
 
@@ -173,7 +173,7 @@ Token get_token() {
 		return Token(char_id, name);
 	}
 	if (cur != EOF) {
-		error("error : unknown character : " + cur);
+		error((string)"unknown character : " + cur);
 	}
 	return NULL_TOKEN;
 

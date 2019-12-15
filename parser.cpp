@@ -58,9 +58,7 @@ void factor() {
 		}
 		return;
 	}
-
 	error("factor: syntax error");
-
 }
 
 
@@ -77,7 +75,6 @@ void condition() {
 }
 
 void statement() {
-	//cout << "token : " << token.type << " " << token.name << endl;
 	if (token.type == IDENT) {
 		token = get_token();
 		if (token.type == LBRACK) {
@@ -105,7 +102,7 @@ void statement() {
 			if (token.type == LPARENT) {
 				token = get_token();
 				expression();
-				while (token.type == ',') {
+				while (token.type == COMMA) {
 					token = get_token();
 					expression();
 				}
@@ -185,9 +182,6 @@ void statement() {
 		statement();
 		return;
 	}
-
-	//error("statement : unexpected " + token.name);
-	return;
 }
 
 void do_block_type1() { //ident = number ,
@@ -237,7 +231,7 @@ void do_block_type3() { // VAR IDENT ;
 }
 
 void block() {
-	if (token.type == CONST) {
+	if (token.type == CONST) { // CONST IDENT = NUMBER,
 		do_block_type1();
 		while (token.type == COMMA) {
 			do_block_type1();
@@ -248,7 +242,7 @@ void block() {
 		token = get_token();
 	}
 
-	if (token.type == VAR) {
+	if (token.type == VAR) { // VAR IDENT[NUMBER],
 		do_block_type2();
 		while (token.type == COMMA) {
 			do_block_type2();
@@ -260,7 +254,7 @@ void block() {
 		token = get_token();
 	}
 
-	while(token.type == PROCEDURE) {
+	while(token.type == PROCEDURE) { // PROCEDURE
 		token = get_token();
 		if (token.type != IDENT) {
 			error("expected an IDENT");
