@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include "const.h"
+#include "class.h"
 
 using namespace std;
 
@@ -26,29 +27,6 @@ void error(string message) {
 }
 
 
-struct Token
-{
-	TokenType type;	//Token nhận dạng được
-	int	num;		//Từ vựng khi Token là NUMBER
-	string name;
-	Token(){};
-	Token(TokenType _type, string _name, int _num = 0) {
-		type = _type;
-		num = _num;
-		name = _name;
-	}
-
-	bool operator < (const Token &p) const {
-		if (type != p.type) {
-			return type < p.type;
-		}
-		if (name != p.name) {
-			return name < p.name;
-		}
-		return num < p.num;
-	}
-};
-
 Token NULL_TOKEN = Token(NONE, "");
 
 FILE* f_in;
@@ -56,6 +34,7 @@ char get_char() {
 	char p;
 	p = getc(f_in);
 	prefix += p;
+	p = toupper(p);
 	return p;
 }
 
@@ -128,7 +107,7 @@ Token get_token() {
             do cur = get_char(), name += cur; while (cur != EOF && cur != '*');
             do cur = get_char(), name += cur; while (cur != EOF && cur != ')');
             cur = get_char();
-            return Token(NONE, name);
+            return get_token();
         }
         return Token(LPARENT, "(");
     }

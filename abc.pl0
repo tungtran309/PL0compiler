@@ -1,9 +1,9 @@
 PROGRAM abcd;
 
-VAR x, y, z, q, r, n, f;
+VAR x, y, z, q, r, n, f, multiply;
 
 PROCEDURE multiply;
-VAR a, b;
+VAR a, b, c;
 BEGIN
   a := (x + y);
   b := Y;
@@ -17,9 +17,9 @@ BEGIN
 END;
 
 PROCEDURE divide;
-VAR w;
+VAR w, n;
 BEGIN
-  r := x;
+  n := x;
   q := 0;
   w := y;
   WHILE w <= r DO w := 2 * w;
@@ -48,13 +48,12 @@ BEGIN
   z := f;
 END;
 
-PROCEDURE asodk;
+PROCEDURE fact(var n);
 BEGIN
   IF n < 1 THEN
   BEGIN
     f := n * f;
-    n := n - 1;
-    CALL fact
+    CALL fact(n - 1)
   END
 END;
 
