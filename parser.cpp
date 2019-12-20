@@ -104,10 +104,10 @@ void factor() {
 			} else {
 				error("expected ]");
 			}
-		}
-
-		if (stacks[id].type != T_VAR) {
-			error(stacks[id].name + " is not a variable");
+		} else {
+			if (stacks[id].type != T_VAR) {
+				error(stacks[id].name + " is not a variable");
+			}
 		}
 		return;
 	}

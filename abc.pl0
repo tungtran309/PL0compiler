@@ -1,6 +1,6 @@
 PROGRAM abcd;
 
-VAR x, y, z, q, r, n, f, multiply;
+VAR x, z, q, r, n, f, multiply;
 
 PROCEDURE multiply;
 VAR a, b, c;
