@@ -178,11 +178,11 @@ void statement() {
 				error(stacks[id].name + " is not an array");
 			}
 			token = get_token();
-			//insert_code(OP_LA, cur_scope - cur_var.scope, cur_var.offset);
-            //insert_code(OP_LC, 0, 2);
+			insert_code(OP_LA, cur_scope - cur_var.scope, cur_var.offset);
+            insert_code(OP_LC, 0, 2);
             expression();
-            //insert_code(OP_MUL, 0, 0);
-            //insert_code(OP_ADD, 0, 0);
+            insert_code(OP_MUL, 0, 0);
+            insert_code(OP_ADD, 0, 0);
 			if (token.type == RBRACK) {
 				token = get_token();
 			} else {
@@ -192,10 +192,13 @@ void statement() {
 			if (stacks[id].type != T_VAR) {
 				error(stacks[id].name + " is not a variable");
 			}
+			if(cur_var.is_refer == 1) insert_code(OP_LV, cur_scope - cur_var.scope, cur_var.offset);
+            else insert_code(OP_LA, cur_scope - cur_var.scope, cur_var.offset);
 		}
 		if (token.type == ASSIGN) {
 			token = get_token();
 			expression();
+			insert_code(OP_ST, 0, 0);
 			return;
 		}
 		error("expected character := ");
@@ -209,15 +212,24 @@ void statement() {
 				error("can not find PROCEDURE " + token.name);
 			}
 			token = get_token();
-			vector < bool > var_type;
+			int num_var = 0;
 			if (token.type == LPARENT) {
 				token = get_token();
 				bool is_refer = expression();
-				var_type.push_back(is_refer);
+				if (stacks[id].var_type[num_var] == 1 && is_refer == 0) {
+					error("must be a reference call");
+				}
+				num_var++;
 				while (token.type == COMMA) {
+					if (num_var >= stacks[id].var_type.size()) {
+						error("wrong number of variable in CALL " + stacks[id].name);
+					}
 					token = get_token();
 					bool is_refer = expression();
-					var_type.push_back(is_refer);
+					if (stacks[id].var_type[num_var] == 1 && is_refer == 0) {
+						error("must be a reference call");
+					}
+					num_var++;
 				}
 				if (token.type == RPARENT) {
 					token = get_token();
@@ -225,13 +237,8 @@ void statement() {
 					error("expected character )");
 				}
 			}
-			if (stacks[id].var_type.size() != var_type.size()) {
+			if (stacks[id].var_type.size() != num_var) {
 				error("wrong number of variable in CALL " + stacks[id].name);
-			}
-			for (int i = 0; i < var_type.size(); i++) {
-				if (stacks[id].var_type[i] == 1 && var_type[i] == 0) {
-					error("must be a reference call");
-				}
 			}
 		} else if (token.type == IDENT && token.name == "WRITEI") {
 			token = get_token();
