@@ -7,8 +7,10 @@ using namespace std;
 Token token;
 
 vector < Object > stacks;
+stack < int > procedure_mem;
+vector < Instruction > code;
 
-int cur_scope = 0;
+int cur_scope = 0, offset = 0;
 
 int find_location(string name) { // return id of name in stacks
 	for (int i = (int)stacks.size() - 1; i >= 0; i--) {
@@ -36,25 +38,27 @@ bool check_ident(string name, ObjectType type) { // in stacks or not
 	return true;
 }
 
+void show_stack() {
+	for (int i = 0; i < stacks.size(); i++) {
+		Object p = stacks[i];
+		cout << p.name << " " << p.scope << " " << p.offset << endl;
+	}
+	cout << endl;
+}
+
 void enter(string name, ObjectType type) { // push name, type to stacks
 	if (check_ident(name, type)) {
 		error(name + " has been declared");
 	}
-	stacks.push_back(Object(type, token.name, cur_scope));
+	stacks.push_back(Object(type, token.name, cur_scope, offset + 4));
+	offset += 2;
 }
 
 void open_scope() {
 	++cur_scope;
+	procedure_mem.push(offset);
 }
 
-
-void show_stack() {
-	for (int i = 0; i < stacks.size(); i++) {
-		Object p = stacks[i];
-		cout << p.name << " " << p.scope << endl;
-	}
-	cout << endl;
-}
 
 void close_scope() {
 	int last = (int)stacks.size() - 1;
@@ -64,29 +68,37 @@ void close_scope() {
 		}
 	}
 	--cur_scope;
+	offset = procedure_mem.top();
+	procedure_mem.pop();
 }
 
-void term() {
-	factor();
+bool term() {
+	int is_refer = factor();
 	while (token.type == TIMES || token.type == SLASH) {
 		token = get_token();
 		factor();
+		is_refer = false;
 	}
+	return is_refer;
 }
 
-void expression() {
+bool expression() {
+	int is_refer = 1;
 	if (token.type == PLUS || token.type == MINUS) {
+		is_refer = false;
 		token = get_token();
 	}
-	term();
+	is_refer &= term();
 	while (token.type == PLUS || token.type == MINUS) {
 		token = get_token();
+		is_refer = false;
 		term();
 	}
+	return is_refer;
 }
 
 
-void factor() {
+bool factor() {
 	if (token.type == IDENT) {
 		int id = find_location(token.name);
 		if (id == -1) {
@@ -109,12 +121,12 @@ void factor() {
 				error(stacks[id].name + " is not a variable");
 			}
 		}
-		return;
+		return true;
 	}
 
 	if (token.type == NUMBER) {
 		token = get_token();
-		return;
+		return false;
 	}
 
 	if (token.type == LPARENT) {
@@ -125,12 +137,14 @@ void factor() {
 		} else {
 			error("expected character )");
 		}
-		return;
+		return false;
 	}
 	error("factor: syntax error");
 }
 
-
+void insert_code(OpCode op, int p, int q) {
+	code.push_back(Instruction(op, p, q));
+}
 
 void condition() {
 	expression();
@@ -143,7 +157,7 @@ void condition() {
 	error("condition: syntax error");
 }
 
-void check_assign_variable(string name) {
+Object check_assign_variable(string name) {
 	int id = find_location(name);
 	if (id == -1 || stacks[id].type == T_PROCEDURE) {
 		error(token.name + " was not declared");
@@ -151,19 +165,24 @@ void check_assign_variable(string name) {
 	if (stacks[id].type == T_CONST) {
 		error(token.name + " can not change value of a constant");
 	}
+	return stacks[id];
 }
 
 void statement() {
 	if (token.type == IDENT) {
 		int id = find_location(token.name);
-		check_assign_variable(token.name);
+		Object cur_var = check_assign_variable(token.name);
 		token = get_token();
 		if (token.type == LBRACK) {
 			if (stacks[id].type != T_ARRAY) {
 				error(stacks[id].name + " is not an array");
 			}
 			token = get_token();
-			expression();
+			//insert_code(OP_LA, cur_scope - cur_var.scope, cur_var.offset);
+            //insert_code(OP_LC, 0, 2);
+            expression();
+            //insert_code(OP_MUL, 0, 0);
+            //insert_code(OP_ADD, 0, 0);
 			if (token.type == RBRACK) {
 				token = get_token();
 			} else {
@@ -174,7 +193,6 @@ void statement() {
 				error(stacks[id].name + " is not a variable");
 			}
 		}
-
 		if (token.type == ASSIGN) {
 			token = get_token();
 			expression();
@@ -185,21 +203,21 @@ void statement() {
 
 	if (token.type == CALL) {
 		token = get_token();
-		if (token.type == IDENT) {
+		if (token.type == IDENT && token.name != "WRITEI" && token.name != "WRITELN") {
 			int id = find_location(token.name);
 			if (id == -1 || stacks[id].type != T_PROCEDURE) {
 				error("can not find PROCEDURE " + token.name);
 			}
 			token = get_token();
-			int var_number = 0;
+			vector < bool > var_type;
 			if (token.type == LPARENT) {
 				token = get_token();
-				expression();
-				var_number++;
+				bool is_refer = expression();
+				var_type.push_back(is_refer);
 				while (token.type == COMMA) {
 					token = get_token();
-					expression();
-					var_number++;
+					bool is_refer = expression();
+					var_type.push_back(is_refer);
 				}
 				if (token.type == RPARENT) {
 					token = get_token();
@@ -207,9 +225,27 @@ void statement() {
 					error("expected character )");
 				}
 			}
-			if (stacks[id].var_number != var_number) {
+			if (stacks[id].var_type.size() != var_type.size()) {
 				error("wrong number of variable in CALL " + stacks[id].name);
 			}
+			for (int i = 0; i < var_type.size(); i++) {
+				if (stacks[id].var_type[i] == 1 && var_type[i] == 0) {
+					error("must be a reference call");
+				}
+			}
+		} else if (token.type == IDENT && token.name == "WRITEI") {
+			token = get_token();
+            if(token.type == LPARENT){
+                token = get_token();
+                expression();
+                if(token.type == RPARENT){
+                    token = get_token();
+                }
+                else error("expected character )");
+            }
+            else error("expected character (");
+		} else if (token.type == IDENT && token.name == "WRITELN") {
+			token = get_token();
 		} else {
 			error("expected an IDENT");
 		}
@@ -315,6 +351,7 @@ void declare_var() { // ident [number] ,
 		if (token.type != NUMBER) {
 			error("expected a NUMBER");
 		}
+		offset += token.num * 2 - 2;
 		token = get_token();
 		if (token.type != RBRACK) {
 			error("expected ]");
@@ -323,16 +360,20 @@ void declare_var() { // ident [number] ,
 	}
 }
 
-void declare_var_procedure() { // VAR IDENT ;
+bool declare_var_procedure() { // VAR IDENT ;
 	token = get_token();
+	bool is_refer = false;
 	if (token.type == VAR) {
 		token = get_token();
+		is_refer = true;
 	}
 	if (token.type != IDENT) {
 		error("expected an IDENT");
 	}
 	enter(token.name, T_VAR);
+	stacks[find_location(token.name)].set_is_refer(is_refer);
 	token = get_token();
+	return is_refer;
 }
 
 void block() {
@@ -360,6 +401,7 @@ void block() {
 	}
 
 	while(token.type == PROCEDURE) { // PROCEDURE
+		offset = 0;
 		token = get_token();
 		if (token.type != IDENT) {
 			error("expected an IDENT");
@@ -369,13 +411,12 @@ void block() {
 		open_scope();
 		token = get_token();
 		if (token.type == LPARENT) {
-			int var_number = 1;
-			declare_var_procedure();
+			bool is_refer = declare_var_procedure();
+			stacks[id].push_var_type(is_refer);
 			while (token.type == SEMICOLON) {
-				var_number++;
-				declare_var_procedure();
+				bool is_refer = declare_var_procedure();
+				stacks[id].push_var_type(is_refer);
 			}
-			stacks[id].set_var_number(var_number);
 			if (token.type != RPARENT) {
 				error("expected character )");
 			}

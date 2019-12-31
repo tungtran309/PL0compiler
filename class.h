@@ -1,3 +1,4 @@
+
 struct Token
 {
 	TokenType type;	//Token nhận dạng được
@@ -26,16 +27,41 @@ struct Object
 	ObjectType type;
 	string name;
 	int scope;
-	int var_number;
+	vector < bool > var_type;
+	int offset;
+	bool is_refer;
 	Object(){};
 	Object(ObjectType _type, string _name, int _scope) {
 		type = _type;
 		name = _name;
 		scope = _scope;
-		var_number = 0;
+	}
+	Object(ObjectType _type, string _name, int _scope, int _offset) {
+		type = _type;
+		name = _name;
+		scope = _scope;
+		offset = _offset;	
 	}
 
-	void set_var_number(int _var_number) {
-		var_number = _var_number;
+	void set_is_refer(bool _is_refer) {
+		is_refer = _is_refer;
 	}
+
+	void push_var_type(bool is_refer) {
+		var_type.push_back(is_refer);
+	}
+	
 };
+
+struct Instruction {
+    OpCode op;
+    int p;
+    int q;
+    Instruction(){};
+    Instruction(OpCode _op, int _p, int _q){
+    	op = _op;
+    	p = _p;
+    	q = _q;
+    }
+};
+

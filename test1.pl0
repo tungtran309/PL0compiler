@@ -1,14 +1,16 @@
 PROGRAM abcd;
-var x[10],y[10]; (*varibles*)
+var x, y; (*varibles*)
 begin
-	if y[2] < 10 then
+	x := 5;
+	y := 7;
+	if y > x then
 		begin
-			y[1] := x[5] + 15;
-			x[6] := 6
+			x := y - x;
 		end
 	else
 		begin
-			y[1] := x[2]*y[1];
-			x[1] := 8
+			x := x - y;
 		end;
+	call WRITEI(x);
+	call WRITELN;
 end.
