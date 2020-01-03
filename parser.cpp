@@ -12,6 +12,10 @@ vector < Instruction > code;
 
 int cur_scope = 0, offset = 0;
 
+void insert_code(OpCode op, int p, int q) {
+	code.push_back(Instruction(op, p, q));
+}
+
 int find_location(string name) { // return id of name in stacks
 	for (int i = (int)stacks.size() - 1; i >= 0; i--) {
 		if (stacks[i].name == name) {
@@ -51,7 +55,7 @@ void enter(string name, ObjectType type) { // push name, type to stacks
 		error(name + " has been declared");
 	}
 	stacks.push_back(Object(type, token.name, cur_scope, offset + 4));
-	offset += 2;
+	offset++;
 }
 
 void open_scope() {
@@ -140,10 +144,6 @@ bool factor() {
 		return false;
 	}
 	error("factor: syntax error");
-}
-
-void insert_code(OpCode op, int p, int q) {
-	code.push_back(Instruction(op, p, q));
 }
 
 void condition() {
@@ -358,7 +358,7 @@ void declare_var() { // ident [number] ,
 		if (token.type != NUMBER) {
 			error("expected a NUMBER");
 		}
-		offset += token.num * 2 - 2;
+		offset += token.num;
 		token = get_token();
 		if (token.type != RBRACK) {
 			error("expected ]");
