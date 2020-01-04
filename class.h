@@ -30,17 +30,20 @@ struct Object
 	vector < bool > var_type;
 	int offset;
 	bool is_refer;
+	int pos_q;
 	Object(){};
 	Object(ObjectType _type, string _name, int _scope) {
 		type = _type;
 		name = _name;
 		scope = _scope;
+		is_refer = 0;
 	}
 	Object(ObjectType _type, string _name, int _scope, int _offset) {
 		type = _type;
 		name = _name;
 		scope = _scope;
 		offset = _offset;	
+		is_refer = 0;
 	}
 
 	void set_is_refer(bool _is_refer) {
@@ -51,6 +54,9 @@ struct Object
 		var_type.push_back(is_refer);
 	}
 	
+	void set_pos_q(int x) {
+		pos_q = x;
+	}
 };
 
 struct Instruction {

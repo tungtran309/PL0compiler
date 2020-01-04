@@ -1,63 +1,46 @@
 PROGRAM abcd;
 
-VAR x, z, q, r, n, f, multiply;
+VAR result, a[10], i, j, temp;
 
-PROCEDURE multiply;
-VAR a, b, c;
+(*PROCEDURE gcd(var f; var g; var result);
 BEGIN
-  a := (x + y);
-  b := Y;
-  z := 0;
-  WHILE b > 0 DO
-  BEGIN
-    IF b = 1 THEN z := z + a;
-    a := 2 * a;
-    b := b / 2
-  END
-END;
-
-PROCEDURE divide;
-VAR w, n;
-BEGIN
-  n := x;
-  q := 0;
-  w := y;
-  WHILE w <= r DO w := 2 * w;
-  WHILE w > y DO
-  BEGIN
-    q := 2 * q;
-    w := w / 2;
-    IF w <= r THEN
-    BEGIN
-      r := r - w;
-      q := q + 1
-    END
-  END
-END;
-
-PROCEDURE gcd;
-VAR f, g;
-BEGIN
-  f := x;
-  g := y;
   WHILE f <> g DO
   BEGIN
     IF f < g THEN g := g - f;
     IF g < f THEN f := f - g
   END;
-  z := f;
-END;
+  result := f;
+END;*)
 
-PROCEDURE fact(var n);
+
+procedure sort;
+var i, j, temp;
+begin
+  for i := 1 to 4 do
+  begin
+    for j := i + 1 to 4 do
+    begin
+      if a[i] > a[j] then
+        begin
+          temp := a[i];
+          a[i] := a[j];
+          a[j] := temp;
+        end;
+    end;
+  end;
+end;
+
+
+
 BEGIN
-  IF n < 1 THEN
-  BEGIN
-    f := n * f;
-    CALL fact(n - 1)
-  END
-END;
-
-
-BEGIN
-
+  for i := 1 to 4 do
+  begin
+    call readi(a[i]);
+  end;
+  call sort;
+  for i := 1 to 4 do
+  begin
+    call writei(a[i]);
+    call writeln;
+  end;
 END.

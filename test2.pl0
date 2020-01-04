@@ -11,7 +11,7 @@ begin
 	end;
 end;
 begin
-	n := 6;
+	n := 5;
 	call giaiThua(result, n);
 	call writei(result);	call writeln; 
 end.

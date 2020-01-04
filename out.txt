@@ -1,0 +1,127 @@
+INT 4 
+INT 1 
+INT 1 
+INT 9 
+INT 1 
+INT 1 
+INT 1 
+J 79 
+INT 4 
+INT 1 
+INT 1 
+INT 1 
+J 13 
+LA 0 4 
+CV 
+LC 1 
+ST 
+CV 
+LI 
+LC 4 
+LE 
+FJ 77 
+LA 0 5 
+CV 
+LV 0 4 
+LC 1 
+ADD 
+ST 
+CV 
+LI 
+LC 4 
+LE 
+FJ 69 
+LA 1 5 
+LV 0 4 
+ADD 
+LI 
+LA 1 5 
+LV 0 5 
+ADD 
+LI 
+GT 
+FJ 62 
+LA 0 6 
+LA 1 5 
+LV 0 4 
+ADD 
+LI 
+ST 
+LA 1 5 
+LV 0 4 
+ADD 
+LA 1 5 
+LV 0 5 
+ADD 
+LI 
+ST 
+LA 1 5 
+LV 0 5 
+ADD 
+LV 0 6 
+ST 
+CV 
+CV 
+LI 
+LC 1 
+ADD 
+ST 
+J 28 
+DCT 1 
+CV 
+CV 
+LI 
+LC 1 
+ADD 
+ST 
+J 17 
+DCT 1 
+EP 
+LA 0 15 
+CV 
+LC 1 
+ST 
+CV 
+LI 
+LC 4 
+LE 
+FJ 99 
+LA 0 5 
+LV 0 15 
+ADD 
+RI 
+CV 
+CV 
+LI 
+LC 1 
+ADD 
+ST 
+J 83 
+DCT 1 
+INT 4 
+DCT 4 
+CALL 0 8 
+LA 0 15 
+CV 
+LC 1 
+ST 
+CV 
+LI 
+LC 4 
+LE 
+FJ 125 
+LA 0 5 
+LV 0 15 
+ADD 
+LI 
+WRI 
+WLN 
+CV 
+CV 
+LI 
+LC 1 
+ADD 
+ST 
+J 107 
+DCT 1 
+HLT 

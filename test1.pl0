@@ -1,16 +1,14 @@
 PROGRAM abcd;
 var x, y; (*varibles*)
+Procedure Foo(VAR A; B);
+begin
+	A := A + 1;
+end;
+
 begin
 	x := 5;
 	y := 7;
-	if y > x then
-		begin
-			x := y - x;
-		end
-	else
-		begin
-			x := x - y;
-		end;
+	call Foo(x, y);
 	call WRITEI(x);
 	call WRITELN;
 end.

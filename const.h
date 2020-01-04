@@ -14,9 +14,28 @@ typedef enum {//Các loại Token được sử dụng trong PL/0
 } TokenType;
 
 typedef enum {
-    OP_LA, OP_LV, OP_LC, OP_LI, OP_INT, OP_DCT, OP_J, OP_FJ, OP_HL, OP_ST, OP_CALL, OP_EP, OP_EF, OP_RC, OP_RI, OP_WRC,OP_WRI,
-    OP_WLN, OP_ADD, OP_SUB, OP_MUL, OP_DIV, OP_NEG, OP_CV, OP_EQ, OP_NE, OP_GT, OP_LT, OP_GE, OP_LE, OP_BP
+    OP_LA, OP_LV, OP_LC, OP_LI, OP_INT, OP_DCT,
+    OP_J, OP_FJ, OP_HLT, OP_ST, OP_CALL, OP_EP, OP_EF,
+    OP_RC, OP_RI, OP_WRC, OP_WRI, OP_WLN,
+    OP_ADD, OP_SUB, OP_MUL, OP_DIV, OP_NEG, OP_CV,
+    OP_EQ, OP_NE, OP_GT, OP_LT, OP_GE, OP_LE
 } OpCode;
+
+int NUM_ARGS[] = {
+    2, 2, 1, 0, 1, 1,
+    1, 1, 0, 0, 2, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0
+};
+
+string CODE_STRING[] = {
+	"LA", "LV", "LC", "LI", "INT", "DCT",
+    "J", "FJ", "HLT", "ST", "CALL", "EP", "EF",
+    "RC", "RI", "WRC", "WRI", "WLN",
+    "ADD", "SUB", "MUL", "DIV", "NEG", "CV",
+    "EQ", "NE", "GT", "LT", "GE", "LE"
+};
 
 typedef enum {
 	T_CONST = 0, T_VAR, T_ARRAY, T_PROCEDURE
