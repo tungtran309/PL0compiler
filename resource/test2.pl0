@@ -1,17 +1,20 @@
 program example;
-var n, result;
+var result, n;
 procedure giaiThua(var result; n);
 var i;
 begin
-	result := 1;
-	while n > 0 do
+	if n < 1 then 
 	begin
+		result := 1;
+	end
+	else
+	begin
+		call giaiThua(result, n - 1);
 		result := result * n;
-		n := n - 1;
-	end;
+	end
 end;
 begin
-	n := 5;
+	n := 6;
 	call giaiThua(result, n);
 	call writei(result);	call writeln; 
 end.

@@ -1,0 +1,22 @@
+PROGRAM abcd;
+const x = 5;
+var y;
+Procedure Foo(A; B);
+begin
+	if A < 1000 then 
+	begin
+		call Foo(A + B, B);
+	end
+	else
+	begin
+		call writei(A);
+		call writeln;
+	end
+end;
+
+begin
+	y := 7;
+	call Foo(x + y, y);
+	call WRITEI(x);
+	call WRITELN;
+end.

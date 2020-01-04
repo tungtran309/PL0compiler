@@ -55,9 +55,9 @@ void enter(string name, ObjectType type) { // push name, type to stacks
 	if (check_ident(name, type)) {
 		error(name + " has been declared");
 	}
-	stacks.push_back(Object(type, token.name, cur_scope, offset + 4));
+	stacks.push_back(Object(type, name, cur_scope, offset + 4));
 	if (type == T_CONST) {
-		insert_code(OP_LC, 0, token.num);
+		insert_code(OP_LC, 0, 0);
 		offset++;
 	}
 	if (type == T_VAR || type == T_ARRAY) {
@@ -149,7 +149,7 @@ bool factor() {
 			insert_code(OP_ADD, 0, 0);
 			insert_code(OP_LI, 0, 0);
 		} else {
-			if (stacks[id].type != T_VAR) {
+			if (stacks[id].type == T_ARRAY || stacks[id].type == T_PROCEDURE) {
 				error(stacks[id].name + " is not a variable");
 			}
 			insert_code(OP_LV, cur_scope - stacks[id].scope, stacks[id].offset);
@@ -429,6 +429,7 @@ void declare_const() { //ident = number ,
 	if (token.type != NUMBER) {
 		error("expected a NUMBER");
 	}
+	code.back().q = token.num;
 	token = get_token();
 }
 
@@ -566,7 +567,9 @@ void program(){
 				insert_code(OP_INT, 0, 4);
 				block();
 				if(token.type == PERIOD) {
-					//cout << "parse successfully" << endl;
+					prefix = prefix.substr(0, prefix.size() - 1);
+					cout << prefix << endl;
+					cout << "parse successfully!" << endl;
 					insert_code(OP_HLT, 0, 0);
 				} else error("expected .");
 
